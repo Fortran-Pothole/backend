@@ -61,8 +61,8 @@ def get_post(db: Session, post_id: int):
 def get_posts(db: Session):
     return db.query(models.Post).all()
 
-def get_posts_done(db: Session, done: int = 0):
-    return db.query(models.Pothole).filter(models.Pothole.done == done)
+def get_posts_done(db: Session, done: int):
+    return db.query(models.Post).filter(models.Post.done == done)
 
 def create_post(db: Session, post: schemas.PostCreate):
     db_post = models.Post(pothole_id=post.pothole_id, user_id=post.user_id, content=post.content, done=post.done)
