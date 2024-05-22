@@ -21,9 +21,14 @@ def read_potholes(db: Session = Depends(get_db)):
     potholes = crud.get_potholes(db)
     return potholes
 
+@router.get("/{pothole_id}", response_model=schemas.Pothole)
+def read_potholes(pothole_id: int, db: Session = Depends(get_db)):
+    potholes = crud.get_pothole(db, pothole_id)
+    return potholes
 
-@router.get("/done", response_model=list[schemas.Pothole])
-def read_potholes_done(done: int = 0, db: Session = Depends(get_db)):
+
+@router.get("/done/{done}", response_model=list[schemas.Pothole])
+def read_potholes_done(done: int, db: Session = Depends(get_db)):
     potholes = crud.get_potholes_done(db, done)
     return potholes
 
