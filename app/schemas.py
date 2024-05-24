@@ -19,6 +19,7 @@ class User(UserBase):
 class PotholeBase(BaseModel):
     lat: str
     lng: str
+    image: str
     done: int = -1 #swagger에 있는 default 값
 
 class PotholeCreate(PotholeBase):
@@ -30,6 +31,7 @@ class PotholeUpdate(BaseModel):
 
 class Pothole(PotholeBase):
     id: int
+    image: str
 
     class Config:
         orm_mode = True
