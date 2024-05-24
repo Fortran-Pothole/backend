@@ -10,6 +10,7 @@ class User(Base):
 class Pothole(Base):
     __tablename__ = "potholes"
     id = Column(Integer, primary_key=True, index=True)
+    image = Column(String, index=True)
     lat = Column(String, index=True)
     lng = Column(String, index=True)
     done = Column(Integer, default=-1)

@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from .database import engine
 from . import models
 from .endpoints import users, posts, potholes
+import os
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import JSONResponse
 
 models.Base.metadata.create_all(bind=engine)
 
