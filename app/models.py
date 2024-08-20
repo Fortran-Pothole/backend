@@ -1,11 +1,14 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from .database import Base
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)  # id는 자동 생성
     name = Column(String, index=True)
+    password = Column(String, nullable=False)
+    reports = relationship("Report", back_populates="owner")
 
 class Pothole(Base):
     __tablename__ = "potholes"
@@ -32,3 +35,13 @@ class Post(Base):
 
     user = relationship("User")
     pothole = relationship("Pothole", back_populates="posts")
+
+class Report(Base):
+    __tablename__ = "reports"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    location = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    images = Column(Text)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    user_id = Column(Integer, ForeignKey("users.id"))  # User 모델과의 외래 키 관계
+    owner = relationship("User", back_populates="reports")
