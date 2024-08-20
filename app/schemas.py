@@ -1,16 +1,19 @@
 from pydantic import BaseModel
-from typing import Optional
+from datetime import datetime
+from typing import List, Optional
 
-# User schemas
 class UserBase(BaseModel):
-    pass  # No name field here, as it will be generated randomly
+    name: str
 
 class UserCreate(UserBase):
-    pass
+    password: str
+
+class UserLogin(BaseModel):
+    name: str
+    password: str
 
 class User(UserBase):
     id: int
-    name: str  # Name field here to display it in responses
 
     class Config:
         orm_mode = True
@@ -55,3 +58,21 @@ class Post(PostBase):
 
     class Config:
         orm_mode = True
+
+class ReportBase(BaseModel):
+    location: str
+    content: str
+    images: str  # 이미지 파일 이름 리스트
+    user_id: int  # 작성자 ID를 포함
+
+class ReportCreate(ReportBase):
+    pass
+
+class Report(ReportBase):
+    id: int
+    created_at: datetime
+    user_id: int  # 작성자 ID 포함
+
+    class Config:
+        orm_mode = True
+    
