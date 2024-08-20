@@ -10,15 +10,25 @@ fake = Faker()
 # def get_users(db: Session, skip: int = 0, limit: int = 100):
 #     return db.query(models.User).offset(skip).limit(limit).all()
 
-def create_user(db: Session, user: schemas.UserCreate):
-    random_name = fake.name()  # Generate a random name using Faker
-    db_user = models.User(name=random_name)
+def create_user(db: Session, user: schemas.User):
+    db_user = models.User(name=user.name, password=user.password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-# Add similar CRUD operations for Pothole and Post
+def get_user_by_name(db: Session, name: str):
+    return db.query(models.User).filter(models.User.name == name).first()
+
+def delete_user(db: Session, user_id: int):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if user:
+        db.delete(user)
+        db.commit()
+    return user
+
+def is_name_taken(db: Session, name: str) -> bool:
+    return db.query(models.User).filter(models.User.name == name).first() is not None
 
 # Pothole CRUD functions
 def get_pothole(db: Session, pothole_id: int):
@@ -88,3 +98,28 @@ def delete_post(db: Session, post_id: int):
         db.delete(db_post)
         db.commit()
     return db_post
+
+def create_report(db: Session, report: schemas.ReportCreate):
+    db_report = models.Report(
+        location=report.location,
+        content=report.content,
+        images=report.images,  # 이미지 리스트를 콤마로 구분된 문자열로 변환하여 저장
+        user_id=report.user_id  # 사용자의 ID를 외래 키로 설정
+    )
+    db.add(db_report)
+    db.commit()
+    db.refresh(db_report)
+    return db_report
+
+def get_report(db: Session, report_id: int):
+    return db.query(models.Report).filter(models.Report.id == report_id).first()
+
+def get_reports(db: Session):
+    return db.query(models.Report).all()
+
+def delete_report(db: Session, report_id: int):
+    report = db.query(models.Report).filter(models.Report.id == report_id).first()
+    if report:
+        db.delete(report)
+        db.commit()
+    return report
