@@ -48,3 +48,15 @@ def delete_post(post_id: int, db: Session = Depends(get_db)):
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
     return crud.delete_post(db=db, post_id=post_id)
+
+@router.post("/pothole")
+def create_pothole_with_post(pothole: schemas.PotholeCreate, post: schemas.PostCreatePothole, db: Session = Depends(get_db)):
+    # Pothole 객체 생성
+    db_pothole = crud.create_pothole(db=db, pothole=pothole)
+    db_post = crud.create_post_with_pothole(db=db, post=schemas.PostCreate(
+        user_id=post.user_id,
+        content=post.content,
+        done=post.done
+    ), pothole_id=db_pothole.id)
+    
+    return {"pothole": db_pothole, "post": db_post}
