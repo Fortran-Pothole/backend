@@ -35,19 +35,21 @@ class PotholeUpdate(BaseModel):
 class Pothole(PotholeBase):
     id: int
     image: str
+    warning: int
 
     class Config:
         orm_mode = True
 
-# Post schemas
 class PostBase(BaseModel):
-    pothole_id: int
     user_id: int
     content: str
-    done: int = -1 #swagger에 있는 default 값
+    done: int = -1  # swagger에 있는 default 값
+
+class PostCreatePothole(PostBase):
+    pass
 
 class PostCreate(PostBase):
-    pass
+    pothole_id: int
 
 class PostUpdate(BaseModel):
     content: Optional[str] = None
@@ -55,6 +57,7 @@ class PostUpdate(BaseModel):
 
 class Post(PostBase):
     id: int
+    pothole_id: int
 
     class Config:
         orm_mode = True
