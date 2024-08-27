@@ -81,6 +81,18 @@ def create_post(db: Session, post: schemas.PostCreate):
     db.refresh(db_post)
     return db_post
 
+def create_post_with_pothole(db: Session, post: schemas.PostCreate, pothole_id: int):
+    db_post = models.Post(
+        pothole_id=pothole_id,  # 여기서 전달된 pothole_id 사용
+        user_id=post.user_id,
+        content=post.content,
+        done=post.done
+    )
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
+
 def update_post(db: Session, post_id: int, post: schemas.PostUpdate):
     db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if db_post:
