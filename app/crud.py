@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 from faker import Faker
+from fastapi import HTTPException
+
 
 fake = Faker()
 
@@ -10,8 +12,8 @@ fake = Faker()
 # def get_users(db: Session, skip: int = 0, limit: int = 100):
 #     return db.query(models.User).offset(skip).limit(limit).all()
 
-def create_user(db: Session, user: schemas.User):
-    db_user = models.User(name=user.name, password=user.password)
+def create_user(db: Session, user: schemas.UserCreate):
+    db_user = models.User(name=user.name, password=user.password, phone=user.phone)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -26,6 +28,9 @@ def delete_user(db: Session, user_id: int):
         db.delete(user)
         db.commit()
     return user
+
+def get_all_users(db: Session):
+    return db.query(models.User).all()
 
 def is_name_taken(db: Session, name: str) -> bool:
     return db.query(models.User).filter(models.User.name == name).first() is not None
@@ -115,7 +120,6 @@ def create_report(db: Session, report: schemas.ReportCreate):
     db_report = models.Report(
         location=report.location,
         content=report.content,
-        images=report.images,  # 이미지 리스트를 콤마로 구분된 문자열로 변환하여 저장
         user_id=report.user_id  # 사용자의 ID를 외래 키로 설정
     )
     db.add(db_report)
@@ -134,4 +138,15 @@ def delete_report(db: Session, report_id: int):
     if report:
         db.delete(report)
         db.commit()
+    return report
+
+def update_report_done(db: Session, report_id: int, done: int):
+    report = db.query(models.Report).filter(models.Report.id == report_id).first()
+
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    report.done = done  # done 상태 업데이트
+    db.commit()
+    db.refresh(report)
     return report
