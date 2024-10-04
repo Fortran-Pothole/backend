@@ -30,3 +30,8 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user 
+
+@router.get("/users/", response_model=list[schemas.User])
+def get_users(db: Session = Depends(get_db)):
+    users = crud.get_all_users(db)
+    return users
