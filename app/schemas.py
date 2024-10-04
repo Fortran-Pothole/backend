@@ -4,6 +4,7 @@ from typing import List, Optional
 
 class UserBase(BaseModel):
     name: str
+    phone: str
 
 class UserCreate(UserBase):
     password: str
@@ -36,6 +37,7 @@ class Pothole(PotholeBase):
     id: int
     image: str
     warning: int
+    created_at: datetime
 
     class Config:
         orm_mode = True
@@ -75,7 +77,14 @@ class Report(ReportBase):
     id: int
     created_at: datetime
     user_id: int  # 작성자 ID 포함
+    done: int
+
 
     class Config:
         orm_mode = True
     
+class ReportUpdate(BaseModel):
+    done: int
+
+class SMSRequest(BaseModel):
+    hpno: str  # 핸드폰 번호를 받아오기 위한 필드
