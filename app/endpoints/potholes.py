@@ -50,7 +50,6 @@ def update_pothole(pothole_id: int, pothole: schemas.PotholeUpdate, sms_request:
 
     return crud.update_pothole(db=db, pothole_id=pothole_id, pothole=pothole)
 
-
 @router.delete("/{pothole_id}", response_model=schemas.Pothole)
 def delete_pothole(pothole_id: int, db: Session = Depends(get_db)):
     db_pothole = crud.get_pothole(db, pothole_id=pothole_id)
