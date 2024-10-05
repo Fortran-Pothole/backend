@@ -24,7 +24,7 @@ class Pothole(Base):
                     # 처리 완료 1
     report_count = Column(Integer, default=0)  # 동일한 위치의 Report 수를 저장하는 필드
     warning = Column(Integer, default=lambda: random.randint(1, 5))  # 1~5 사이의 랜덤 정수
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True))
     posts = relationship("Post", cascade="all, delete-orphan", back_populates="pothole")
 
     def __init__(self, **kwargs):
