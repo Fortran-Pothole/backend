@@ -7,17 +7,17 @@ from .database import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)  # id는 자동 생성
-    name = Column(String, index=True)
-    password = Column(String, nullable=False)
-    phone = Column(String, nullable=False)  # 전화번호 필드 추가
+    name = Column(String(50), index=True)
+    password = Column(String(20), nullable=False)
+    phone = Column(String(12), nullable=False)  # 전화번호 필드 추가
     reports = relationship("Report", back_populates="owner")
 
 class Pothole(Base):
     __tablename__ = "potholes"
     id = Column(Integer, primary_key=True, index=True)
-    image = Column(String, index=True)
-    lat = Column(String, index=True)
-    lng = Column(String, index=True)
+    image = Column(Text, index=True)
+    lat = Column(String(255), index=True)
+    lng = Column(String(255), index=True)
     done = Column(Integer, default=-1)
                     # 처리 전 -1
                     # 처리 중 0
@@ -37,7 +37,7 @@ class Post(Base):
     id = Column(Integer, primary_key=True, index=True)
     pothole_id = Column(Integer, ForeignKey("potholes.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
-    content = Column(String, index=True)
+    content = Column(Text, index=True)
     done = Column(Integer, default=-1)
                     # 처리 전 -1
                     # 처리 중 0
@@ -51,7 +51,7 @@ class Report(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     pothole_id = Column(Integer, ForeignKey("potholes.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
-    location = Column(String, nullable=False)
+    location = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
     done = Column(Integer, default=-1)
                     # 처리 전 -1
