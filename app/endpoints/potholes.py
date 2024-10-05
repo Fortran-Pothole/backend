@@ -23,6 +23,10 @@ def get_db():
 def create_pothole(pothole: schemas.PotholeCreate, db: Session = Depends(get_db)):
     return crud.create_pothole(db=db, pothole=pothole)
 
+@router.post("/with_json", response_model=schemas.Pothole)
+def create_pothole_with_json(pothole: schemas.PotholeCreateJson, db: Session = Depends(get_db)):
+    return crud.create_pothole_with_json(db=db, pothole=pothole)
+
 @router.get("/", response_model=list[schemas.Pothole])
 def read_potholes(db: Session = Depends(get_db)):
     potholes = crud.get_potholes(db)
