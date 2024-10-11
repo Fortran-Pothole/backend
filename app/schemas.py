@@ -75,6 +75,11 @@ class ReportBase(BaseModel):
 class ReportCreate(ReportBase):
     pass
 
+class ReportCreateImg(BaseModel):
+    location: str
+    content: str
+    user_id: int  # 작성자 ID를 포함
+
 class Report(ReportBase):
     id: int
     created_at: datetime
