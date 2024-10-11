@@ -27,7 +27,10 @@ class PotholeBase(BaseModel):
     done: int = -1 #swagger에 있는 default 값
 
 class PotholeCreate(PotholeBase):
-    pass
+    warning: Optional[int] = None
+
+    class Config:
+        orm_mode = True
 
 class PotholeCreateJson(PotholeBase):
     created_at: datetime

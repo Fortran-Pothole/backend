@@ -47,7 +47,10 @@ def get_potholes_done(db: Session, done: int = 0):
 
 def create_pothole(db: Session, pothole: schemas.PotholeCreate):
     created_at = datetime.now()
-    db_pothole = models.Pothole(lat=pothole.lat, lng=pothole.lng, done=pothole.done, image=pothole.image, created_at=created_at)
+    if pothole.warning:
+        db_pothole = models.Pothole(lat=pothole.lat, lng=pothole.lng, done=pothole.done, image=pothole.image, created_at=created_at, warning=pothole.warning)
+    else:
+        db_pothole = models.Pothole(lat=pothole.lat, lng=pothole.lng, done=pothole.done, image=pothole.image, created_at=created_at)
     db.add(db_pothole)
     db.commit()
     db.refresh(db_pothole)
