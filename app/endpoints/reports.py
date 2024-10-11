@@ -1,9 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
+import boto3
+import os
+from datetime import datetime
 from typing import List
 from .. import crud, schemas
 from ..database import SessionLocal
 from jmunja import smssend
+# import json
 
 
 router = APIRouter()
@@ -18,6 +22,57 @@ def get_db():
 @router.post("", response_model=schemas.Report)
 def create_report(report: schemas.ReportCreate, db: Session = Depends(get_db)):
     return crud.create_report(db=db, report=report)
+
+# AWS S3 설정
+AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
+AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
+
+# S3 클라이언트 생성
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_KEY
+)
+
+@router.post("/img", response_model=schemas.ReportCreate)
+async def create_report_with_image(
+    location: str = Form(...),  # Form으로 본문 데이터 받기
+    content: str = Form(...),  # Form으로 본문 데이터 받기
+    user_id: int = Form(...),  # Form으로 본문 데이터 받기    
+    images: UploadFile = File(...),  # 이미지 파일을 받는 부분
+    db: Session = Depends(get_db)
+):
+    try:
+        # 문자열로 받은 JSON 데이터를 파싱
+        # report_data = json.loads(report)
+        # report_obj = schemas.ReportCreateImg(**report_data)
+
+        # 파일 이름 생성 (유니크하게 만들기 위해 날짜와 원본 파일명을 조합)
+        image_filename = f"{datetime.now().isoformat()}_{images.filename}"
+        
+        # S3에 이미지 업로드
+        s3_client.upload_fileobj(images.file, 
+                                AWS_BUCKET_NAME, 
+                                image_filename,
+                                ExtraArgs={'ContentType': images.content_type}  # Content-Type 지정
+)
+        
+        # S3 URL 생성
+        image_url = f"https://{AWS_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com/{image_filename}"
+        
+        # Report 생성할 때 image URL을 포함
+        new_report = schemas.ReportCreate(
+            location=location,
+            content=content,
+            images=image_url,
+            user_id=user_id
+        )
+        
+        return crud.create_report_img(db=db, report=new_report)
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/{report_id}", response_model=schemas.Report)
 def read_report(report_id: int, db: Session = Depends(get_db)):
