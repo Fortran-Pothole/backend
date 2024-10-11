@@ -136,6 +136,18 @@ def create_report(db: Session, report: schemas.ReportCreate):
     db.refresh(db_report)
     return db_report
 
+def create_report_img(db: Session, report: schemas.ReportCreate):
+    db_report = models.Report(
+        location=report.location,
+        content=report.content,
+        user_id=report.user_id,
+        images=report.images  # S3에서 받은 이미지 URL을 저장
+    )
+    db.add(db_report)
+    db.commit()
+    db.refresh(db_report)
+    return db_report
+
 def get_report(db: Session, report_id: int):
     return db.query(models.Report).filter(models.Report.id == report_id).first()
 
