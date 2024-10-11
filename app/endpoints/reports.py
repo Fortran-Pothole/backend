@@ -20,7 +20,7 @@ def get_db():
         db.close()
 
 @router.post("", response_model=schemas.Report)
-def create_report(report: schemas.ReportCreate, db: Session = Depends(get_db)):
+def create_report(report: schemas.ReportCreateImg, db: Session = Depends(get_db)):
     return crud.create_report(db=db, report=report)
 
 # AWS S3 설정

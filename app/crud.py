@@ -6,6 +6,28 @@ from datetime import datetime
 
 fake = Faker()
 
+images_list = [
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/V3F_HY_1562_20160212_013414_N_CH2_Seoul_Sun_Highway_Day_84497.png",
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/502d1f78-da20-48c9-b1b4-9729021391a1.jpg",
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/2c39bb91-c9ae-4143-b62f-7fd22003ab31.jpg",
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/0977579c-8ac4-46d6-9178-d75276d7bfbf.jpg",
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/8bcba1a1-ba02-4e78-9cef-141a0d123033.jpg"
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/8bcba1a1-ba02-4e78-9cef-141a0d123033.jpg",
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/a8a743d4-7bc1-4755-8c9e-59e5c3e93f78.jpg",
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/p2.png",
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/p1.png",
+    "https://fortran-pothole.s3.ap-northeast-2.amazonaws.com/p3.jpg"
+]
+
+image_index = 0
+
+def get_next_image():
+    global image_index
+    # 현재 인덱스에 해당하는 이미지 선택
+    image = images_list[image_index]
+    image_index = (image_index + 1) % len(images_list)
+    return image
+
 # def get_user(db: Session, user_id: int):
 #     return db.query(models.User).filter(models.User.id == user_id).first()
 
@@ -128,11 +150,12 @@ def delete_post(db: Session, post_id: int):
         db.commit()
     return db_post
 
-def create_report(db: Session, report: schemas.ReportCreate):
+def create_report(db: Session, report: schemas.ReportCreateImg):
     db_report = models.Report(
         location=report.location,
         content=report.content,
-        user_id=report.user_id  # 사용자의 ID를 외래 키로 설정
+        user_id=report.user_id, # 사용자의 ID를 외래 키로 설정
+        images=get_next_image()
     )
     db.add(db_report)
     db.commit()
