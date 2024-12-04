@@ -197,3 +197,7 @@ def update_report_done(db: Session, report_id: int, done: int):
     db.commit()
     db.refresh(report)
     return report
+
+def delete_all_potholes(db: Session):
+    db.query(models.Pothole).delete()
+    db.commit()

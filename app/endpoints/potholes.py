@@ -60,3 +60,8 @@ def delete_pothole(pothole_id: int, db: Session = Depends(get_db)):
     if db_pothole is None:
         raise HTTPException(status_code=404, detail="Pothole not found")
     return crud.delete_pothole(db=db, pothole_id=pothole_id)
+
+@router.delete("/all", response_model=dict)
+def delete_all_potholes(db: Session = Depends(get_db)):
+    crud.delete_all_potholes(db=db)
+    return {"message": "All potholes deleted successfully"}
